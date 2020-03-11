@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>鼠标滑块事件</title>
+    <style>
+    * {
+    	margin: 0;
+    	padding: 0;
+    }
+    body {
+    	user-select: none;
+    }
+    .wrap {
+    	position: relative;
+    	width: 500px;
+    	height: 40px;
+    	margin: 100px auto;
+    	background-color: #e8e8e8;
+    }
+    .rect {
+    	position: absolute;
+    	top: 0;
+    	left: 0;
+    	width: 100%;
+    	height: 100%;
+    	line-height: 40px;
+    	text-align: center;
+    }
+    .slice {
+    	position: absolute;
+    	top: 0;
+    	left: 0;
+    	box-sizing: border-box;
+    	width: 45px;
+    	height: 40px;
+    	border: 1px solid #ccc;
+    	background-color: #fff;
+    	cursor: move;
+    }
+    </style>
+</head>
+<body>
+	<div class="wrap">
+		<div class="bg">
+			<div class="rect">
+				<i>滑块验证</i>
+				<div class="slice"><img src="./img/1.jpg"></div>
+			</div>
+		</div>
+	</div>
+
+
+<script type="text/javascript">
+/*
+思路:
+1.在js中如何获取元素  ---》  document.querySelector()
+2.在js中如何监听鼠标按下事件--》oside。onmousedown()
+   获取当前鼠标按下时x坐标 --》e.client
+
+3.在js中如何监听鼠标移动事件 --》document.onmousemove(){
+	获取当前鼠标移动后的x坐标
+}
+4.在js中设置css样式--》oside.style.left{
+	left = 3 - 2
+}
+   鼠标滑到最右边表示验证成功   滑块验证改验证成功 字体改绿色
+
+5.边界判断
+
+前端 -》 性能和效率-》可维护性
+ */
+
+/*获取元素*/
+var oside = document.querySelector('.slice'),//h5获取元素
+    orect = document.querySelector('.rect'),
+    obg = document.querySelector('.bg'),
+    i = document.querySelector('.rect i')
+    oimg = document.querySelector('.slice img'),
+    isClick = false,//初始化没有被点击
+    left = 0,//赋值初始值确定类型
+    slideWidht = oside.clientWidth,//获取slide的宽度
+    rectWidth = orect.clientWidth;//获取rect的宽度
+    
+
+
+/*鼠标按下事件*/
+oside.onmousedown = function(e){//鼠标按下事件--》执行函数
+	if(isClick) return;//如果到头直接返回
+	// isClick = true;//现在到头了
+	var initX = e.clientX;//保存当前鼠标按下时的x坐标
+
+
+
+/*鼠标移动事件*/
+document.onmousemove = function(e){//鼠标移动事件--》执行函数
+		var moveX = e.clientX;
+		left = moveX - initX;//需要设置的left值
+		left = Math.max(left,0);//判断最大值
+		left = Math.min(left,rectWidth - slideWidht);//判断最大值
+		oside.style.left = obg.style.width = left + 'px';
+		if (left >= rectWidth - slideWidht){//拖动到头
+			// 数据请求ajax
+			document.onmousemove = null;
+			orect.style.color = '#fff';
+			oimg.src = 'img/2.jpg';//改变图片路径
+			i.innerHTML = "验证成功";//验证成功  改变验证成功
+			i.style.color = "green";//字体改变绿色
+
+		}
+		console.log("以单击",left)
+	}
+}
+
+
+
+/*鼠标抬起事件*/
+document.onmouseup = function() {//鼠标抬起事件
+	document.onmousemove = null;
+	if(left < rectWidth - slideWidht){
+		oside.style.left = obg.style.width = 0;
+	}
+	console.log('抬起鼠标')
+}
+</script>
+    
+</body>
+</html>
